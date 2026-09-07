@@ -1,5 +1,13 @@
 import java.util.ArrayList;
 
+/**
+ * Representa una rueda (carrete) de la máquina tragamonedas. Cada rueda
+ * mantiene una lista ordenada de símbolos (colores) y un índice que indica
+ * cuál de ellos está actualmente visible. Se apoya en un Rectangle del
+ * paquete "shapes" para dibujarse a sí misma sobre el Canvas.
+ *
+ * @version Ciclo 1 (corregido)
+ */
 public class Wheel {
     private ArrayList<String> symbols;
     private int currentIndex;
@@ -15,13 +23,13 @@ public class Wheel {
         symbols.add("red");
         symbols.add("yellow");
         symbols.add("blue");
-        symbols.add("green");        
+        symbols.add("green");
         currentIndex = 0;
         xPosition = x;
         yPosition = y;
         width = w;
         height = h;
-        isVisible = false;        
+        isVisible = false;
         visibleSlot = new Rectangle();
         visibleSlot.changeSize(height, width);
         visibleSlot.moveHorizontal(x - 70);
@@ -38,12 +46,53 @@ public class Wheel {
     }
 
     public void addSymbol(int pos, String color) {
-        int index = Math.max(1, Math.min(pos, symbols.size() + 1));
+        int maxPos = symbols.size() + 1;
+        int index = Math.max(1, Math.min(pos, maxPos));
         symbols.add(index - 1, color);
+        actualizarVisual();
     }
 
     public boolean delSymbol(String color) {
-        return symbols.remove(color);
+        boolean removed = symbols.remove(color);
+        if (removed) {
+            if (currentIndex >= symbols.size()) {
+                currentIndex = symbols.isEmpty() ? 0 : symbols.size() - 1;
+            }
+            actualizarVisual();
+        }
+        return removed;
+    }
+
+    /**
+     * Reemplaza por completo el catálogo de símbolos de esta rueda.
+     * Se usa desde SlotMachine para mantener sincronizadas todas las
+     * ruedas cuando se agrega una rueda nueva después de haber
+     * modificado los símbolos de las ruedas existentes.
+     */
+    public void setSymbols(ArrayList<String> nuevosSimbolos) {
+        symbols = new ArrayList<>(nuevosSimbolos);
+        if (currentIndex >= symbols.size()) {
+            currentIndex = 0;
+        }
+        actualizarVisual();
+    }
+
+    public ArrayList<String> getSymbols() {
+        return new ArrayList<>(symbols);
+    }
+
+    /**
+     * Fuerza el símbolo visible de la rueda a uno específico, si existe
+     * en su catálogo. Devuelve false si el símbolo no está presente.
+     */
+    public boolean placeSymbol(String symbol) {
+        int idx = symbols.indexOf(symbol);
+        if (idx < 0) {
+            return false;
+        }
+        currentIndex = idx;
+        actualizarVisual();
+        return true;
     }
 
     public void spin(int steps) {
@@ -67,8 +116,10 @@ public class Wheel {
 
     public void makeVisible() {
         isVisible = true;
+        if (!symbols.isEmpty()) {
+            visibleSlot.changeColor(getVisibleSymbol());
+        }
         visibleSlot.makeVisible();
-        actualizarVisual();
     }
 
     public void makeInvisible() {
