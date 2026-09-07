@@ -25,24 +25,46 @@ public class SlotMachine {
         isVisible = false;
         lastOperationOk = true;
         screen = new Rectangle();
+        screen.changeSize(200,300);
+        screen.changeColor("magenta");
         handleDown = new Rectangle();
+        handleDown.changeSize(10,50);
+        handleDown.changeColor("black");
+        handleDown.moveHorizontal(300);
+        handleDown.moveVertical(100);
         handleUp = new Rectangle();
+        handleUp.changeSize(50,10);
+        handleUp.changeColor("black");
+        handleUp.moveHorizontal(350);
+        handleUp.moveVertical(60);
         handlePoint = new Circle();
+        handlePoint.changeSize(25);
+        handlePoint.changeColor("red");
+        handlePoint.moveHorizontal(390);
+        handlePoint.moveVertical(50);
         screen.changeSize(200, 300);
         screen.changeColor("magenta");
     }
 
     public void addWheel(int pos) {
-        int xOffset = 50 + (wheels.size() * 50);
-        Wheel nuevaRueda = new Wheel(xOffset, 50, 40, 100);
+        int maxPos = wheels.isEmpty() ? 1 : wheels.size() + 1;
+        int targetPos = pos;       
+        if (targetPos < 1) {
+            targetPos = 1;
+        } else if (targetPos > maxPos) {
+            targetPos = maxPos;
+        }
         
-        if (wheels.isEmpty()) {
-            wheels.add(nuevaRueda);
-            lastOperationOk = true;
-        } else {
-            int index = validarPosicionRueda(pos);
-            wheels.add(index - 1, nuevaRueda);
-            lastOperationOk = true;
+        int margenInicialX = 30;
+        int separacionX = 50;
+        int yFijo = 50;  
+        int coordenadaX = margenInicialX + ((targetPos - 1) * separacionX);
+        Wheel nuevaRueda = new Wheel(coordenadaX, yFijo, 25, 120);
+        wheels.add(targetPos - 1, nuevaRueda);
+        lastOperationOk = true;      
+        for (int i = targetPos; i < wheels.size(); i++) {
+            int desplazarX = margenInicialX + (i * separacionX);
+            wheels.get(i).setPosition(desplazarX, yFijo);
         }
         
         if (isVisible) {
@@ -50,6 +72,21 @@ public class SlotMachine {
         }
     }
 
+    private void actualizarPosicionesRuedas() {
+        int xScreen = 70;
+        int anchoScreen = 300;
+        int margenLateral = 20;        
+        int maxRuedas = 5;
+        int espacioUtil = anchoScreen - (margenLateral * 2); 
+        int separacionX = espacioUtil / maxRuedas;       
+        int yFijo = 50;
+        
+        for (int i = 0; i < wheels.size(); i++) {
+            int nuevoX = xScreen + margenLateral + (i * separacionX);
+            wheels.get(i).setPosition(nuevoX, yFijo);
+        }
+    }
+    
     public void delWheel(int pos) {
         int index = validarPosicionRueda(pos);
         if (!wheels.isEmpty() && index <= wheels.size()) {
@@ -59,6 +96,21 @@ public class SlotMachine {
         } else {
             lastOperationOk = false;
             manejarError("No se pudo eliminar la rueda en la posición especificada.");
+        }
+    }
+    
+    /**
+     * Fuerza a que las ruedas y la palanca se vuelvan a dibujar al frente del canvas
+     * para evitar que queden ocultas detrás del chasis (screen).
+     */
+    private void traerElementosAlFrente() {
+        if (isVisible) {
+            handleDown.makeVisible();
+            handleUp.makeVisible();
+            handlePoint.makeVisible();
+            for (Wheel w : wheels) {
+                w.makeVisible();
+            }
         }
     }
 
@@ -95,6 +147,7 @@ public class SlotMachine {
             wheels.get(index - 1).spin(1);
             lastOperationOk = true;
             verificarEstadoJackpotVisual();
+            traerElementosAlFrente();
         } else {
             lastOperationOk = false;
             manejarError("La rueda seleccionada no es válida para girar.");
@@ -107,6 +160,7 @@ public class SlotMachine {
         }
         lastOperationOk = true;
         verificarEstadoJackpotVisual();
+        traerElementosAlFrente();
     }
 
     public String[] symbols() {
