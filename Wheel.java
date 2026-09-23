@@ -1,12 +1,9 @@
 import java.util.ArrayList;
 
 /**
- * Representa una rueda (carrete) de la máquina tragamonedas. Cada rueda
- * mantiene una lista ordenada de símbolos (colores) y un índice que indica
- * cuál de ellos está actualmente visible. Se apoya en un Rectangle del
- * paquete "shapes" para dibujarse a sí misma sobre el Canvas.
- *
- * @version Ciclo 1 (corregido)
+ * Representa una rueda de la máquina tragamonedas. 
+ * Cada rueda mantiene una lista ordenada de símbolos 
+ * y un índice que indica cuál de ellos está actualmente visible
  */
 public class Wheel {
     private ArrayList<String> symbols;
@@ -17,6 +14,9 @@ public class Wheel {
     private int height;
     private Rectangle visibleSlot;
     private boolean isVisible;
+    private static final String[] VALID_COLORS = {
+        "red", "black", "blue", "yellow", "green", "magenta", "white"
+    };
 
     public Wheel(int x, int y, int w, int h) {
         symbols = new ArrayList<>();
@@ -44,14 +44,33 @@ public class Wheel {
         visibleSlot.moveHorizontal(dx);
         visibleSlot.moveVertical(dy);
     }
-
-    public void addSymbol(int pos, String color) {
+    
+    /**
+    * Agrega un símbolo (color) en la posición indicada. Devuelve false
+    */
+    public boolean addSymbol(int pos, String color) {
+        String colorNormalizado = normalizarColor(color);
+        if (!esColorValido(colorNormalizado)) {
+            return false;
+        }
         int maxPos = symbols.size() + 1;
         int index = Math.max(1, Math.min(pos, maxPos));
-        symbols.add(index - 1, color);
+        symbols.add(index - 1, colorNormalizado);
         actualizarVisual();
+        return true;
+    }
+    
+     public static String[] getColoresPermitidos() {
+        String[] copia = new String[VALID_COLORS.length];
+        for (int i = 0; i < VALID_COLORS.length; i++) {
+            copia[i] = VALID_COLORS[i];
+        }
+        return copia;
     }
 
+    /**
+     * borrar simbolos  
+    */
     public boolean delSymbol(String color) {
         boolean removed = symbols.remove(color);
         if (removed) {
@@ -62,12 +81,24 @@ public class Wheel {
         }
         return removed;
     }
-
+    
+    private static String normalizarColor(String color) {
+        return color == null ? null : color.trim().toLowerCase();
+    }
+    
+    private static boolean esColorValido(String color) {
+        if (color == null) return false;
+        for (int i = 0; i < VALID_COLORS.length; i++) {
+            if (VALID_COLORS[i].equals(color)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     /**
-     * Reemplaza por completo el catálogo de símbolos de esta rueda.
-     * Se usa desde SlotMachine para mantener sincronizadas todas las
-     * ruedas cuando se agrega una rueda nueva después de haber
-     * modificado los símbolos de las ruedas existentes.
+     * sincroniza las ruedas manteniendo los simbolos 
+     * cuando se agrega una nueva rueda
      */
     public void setSymbols(ArrayList<String> nuevosSimbolos) {
         symbols = new ArrayList<>(nuevosSimbolos);

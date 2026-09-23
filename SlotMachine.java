@@ -2,10 +2,8 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 /**
- * Modela la máquina tragamonedas principal con sus ruedas, chasis y lógica de interacción.
- * 
- * @author (Tu nombre)
- * @version (Versión)
+ * Modela la máquina tragamonedas principal con sus ruedas
+ * simbolos y palanca.
  */
 public class SlotMachine {
     private static final int SCREEN_X = 70;
@@ -127,10 +125,17 @@ public class SlotMachine {
             return;
         }
         
-        for(Wheel w : wheels){
-            w.addSymbol(pos, color);
+        boolean agregadoEnTodas = true;
+        for (Wheel w : wheels) {
+            if (!w.addSymbol(pos, color)) {
+                agregadoEnTodas = false;
+            }
         }
-        lastOperationOk = true;
+        lastOperationOk = agregadoEnTodas;
+        if (!agregadoEnTodas) {
+            manejarError("Color no válido: \"" + color + "\". Colores permitidos: "
+                + String.join(", ", Wheel.getColoresPermitidos()) + ".");
+        }
     }
 
     public void delSymbol(String symbol) {
@@ -200,9 +205,9 @@ public class SlotMachine {
 
     public int distinctSymbols() {
         String[] config = configuration();
-        java.util.HashSet<String> distinct = new java.util.HashSet<>();
+        java.util.HashMap<String, Boolean> distinct = new java.util.HashMap<>();
         for (String s : config) {
-            distinct.add(s);
+            distinct.put(s,true);
         }
         return distinct.size();
     }
@@ -256,7 +261,7 @@ public class SlotMachine {
 
     public void exit() {
         makeInvisible();
-        System.exit(0);
+        lastOperationOk = true;
     }
 
     public boolean ok() {

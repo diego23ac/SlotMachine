@@ -1,6 +1,6 @@
 #BlueJ class context
 comment0.target=SlotMachine
-comment0.text=\r\n\ Modela\ la\ m\u00E1quina\ tragamonedas\ principal\ con\ sus\ ruedas,\ chasis\ y\ l\u00F3gica\ de\ interacci\u00F3n.\r\n\ \r\n\ @author\ (Tu\ nombre)\r\n\ @version\ (Versi\u00F3n)\r\n
+comment0.text=\r\n\ Modela\ la\ m\u00E1quina\ tragamonedas\ principal\ con\ sus\ ruedas\r\n\ simbolos\ y\ palanca.\r\n
 comment1.params=
 comment1.target=SlotMachine()
 comment10.params=
