@@ -77,15 +77,11 @@ public class SlotMachine {
     private void actualizarPosicionesRuedas() {
         int n = wheels.size();
         if (n == 0) return;
- 
-        int usableWidth = SCREEN_WIDTH - (2 * SIDE_MARGIN);
-        int slotWidth = usableWidth / n;
-        int yFijo = SCREEN_Y + (SCREEN_HEIGHT - WHEEL_HEIGHT) / 2;
+        int[] posicionesX = calcularPosicionesX();
+        int yFijo = filaYRuedas();
  
         for (int i = 0; i < n; i++) {
-            int slotStart = SCREEN_X + SIDE_MARGIN + (i * slotWidth);
-            int nuevoX = slotStart + (slotWidth - WHEEL_WIDTH) / 2;
-            wheels.get(i).setPosition(nuevoX, yFijo);
+            wheels.get(i).setPosition(posicionesX[i], yFijo);
         }
     }
     
@@ -154,6 +150,8 @@ public class SlotMachine {
     /**
      * Fuerza el símbolo visible de una rueda específica, 
      * si dicho símbolo existe en su catálogo.
+     * @param wheel posición de la rueda (1-indexada)
+     * @param symbol símbolo que se quiere dejar visible en esa rueda
      */
     public void placeSymbol(int wheel, String symbol) {
         if (wheels.isEmpty()) {
@@ -168,24 +166,143 @@ public class SlotMachine {
             manejarError("El símbolo especificado no existe en la rueda indicada.");
         }
     }
-
-    public void spin(int wheel) {
+    
+    /**
+     * Intercambia el contenido incluida su posición visual dentro del screen.
+     * @param wheel1
+     * @param wheel2
+     */
+    public void swap(int wheel1, int wheel2) {
+        if (wheels.size() < 2) {
+            lastOperationOk = false;
+            manejarError("Se necesitan al menos dos ruedas para intercambiar.");
+            return;
+        }
+        int i1 = validarPosicionRueda(wheel1) - 1;
+        int i2 = validarPosicionRueda(wheel2) - 1;
+ 
+        Wheel temporal = wheels.get(i1);
+        wheels.set(i1, wheels.get(i2));
+        wheels.set(i2, temporal);
+ 
+        if (i1 != i2) {
+            int[] posicionesX = calcularPosicionesX();
+            int yFijo = filaYRuedas();
+            wheels.get(i1).setPosition(posicionesX[i1], yFijo);
+            wheels.get(i2).setPosition(posicionesX[i2], yFijo);
+        }
+        lastOperationOk = true;
+    }
+    
+    /**
+     * Fija una rueda
+     * @param wheel posición de la rueda a fijar
+     */
+    public void lock(int wheel) {
+        if (wheels.isEmpty()) {
+            lastOperationOk = false;
+            manejarError("No hay ruedas para fijar.");
+            return;
+        }
+        int index = validarPosicionRueda(wheel);
+        wheels.get(index - 1).lock();
+        lastOperationOk = true;
+    }
+ 
+    /**
+     * desbloquea una rueda previamente fijada 
+     * @param wheel posición de la rueda a soltar (1-indexada)
+     */
+    public void unlock(int wheel) {
+        if (wheels.isEmpty()) {
+            lastOperationOk = false;
+            manejarError("No hay ruedas para soltar.");
+            return;
+        }
+        int index = validarPosicionRueda(wheel);
+        wheels.get(index - 1).unlock();
+        lastOperationOk = true;
+    }
+ 
+    private int[] calcularPosicionesX() {
+        int n = wheels.size();
+        int[] posiciones = new int[n];
+        if (n == 0) return posiciones;
+ 
+        int usableWidth = SCREEN_WIDTH - (2 * SIDE_MARGIN);
+        int slotWidth = usableWidth / n;
+        for (int i = 0; i < n; i++) {
+            int slotStart = SCREEN_X + SIDE_MARGIN + (i * slotWidth);
+            posiciones[i] = slotStart + (slotWidth - WHEEL_WIDTH) / 2;
+        }
+        return posiciones;
+    }
+    
+    private int filaYRuedas() {
+        return SCREEN_Y + (SCREEN_HEIGHT - WHEEL_HEIGHT) / 2;
+    }
+    
+    /**
+    * Gira una rueda específica la cantidad de pasos indicada
+    * @param wheel
+    * @param steps
+    */
+    public void spin(int wheel,int steps) {
         if (wheels.isEmpty()) {
             lastOperationOk = false;
             manejarError("La rueda seleccionada no es válida para girar.");
             return;
         }
         int index = validarPosicionRueda(wheel);
-        wheels.get(index - 1).spin(1);
-        lastOperationOk = true;
+        boolean giro = wheels.get(index - 1).spin(steps);
+        lastOperationOk = giro;
+        if (!giro) {
+            manejarError("La rueda indicada está fija (lock); primero debe liberarla con unlock.");
+            return;
+        }
         actualizarEstadoJackpot();
     }
 
+    /**
+     * Gira una rueda específica un paso.
+     * @param wheel
+     */
+    public void spin(int wheel) {
+        spin(wheel, 1);
+    }
+    
+    /**
+     * Gira todas las ruedas un paso
+     */
     public void spin() {
         for (Wheel w : wheels) {
             w.spin(1);
         }
         lastOperationOk = true;
+        actualizarEstadoJackpot();
+    }
+    
+    /**
+     * coloca en cada rueda el simbolo correspondiente
+     * @param setSymbols
+     */
+    public void spin(String[] setSymbols) {
+        if (setSymbols == null || setSymbols.length != wheels.size()) {
+            lastOperationOk = false;
+            manejarError("La configuración indicada no coincide con el número de ruedas.");
+            return;
+        }
+        boolean todasColocadas = true;
+        for (int i = 0; i < wheels.size(); i++) {
+            if (!wheels.get(i).placeSymbol(setSymbols[i])) {
+                todasColocadas = false;
+            }
+        }
+        lastOperationOk = todasColocadas;
+        if (!todasColocadas) {
+            manejarError("Alguno de los símbolos indicados no existe en su rueda correspondiente.");
+            return;
+        }
         actualizarEstadoJackpot();
     }
     
@@ -287,4 +404,5 @@ public class SlotMachine {
             screen.changeColor("magenta");
         }
     }
+    
 }

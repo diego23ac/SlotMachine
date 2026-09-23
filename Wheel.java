@@ -17,7 +17,8 @@ public class Wheel {
     private static final String[] VALID_COLORS = {
         "red", "black", "blue", "yellow", "green", "magenta", "white"
     };
-
+    private boolean locked;
+    
     public Wheel(int x, int y, int w, int h) {
         symbols = new ArrayList<>();
         symbols.add("red");
@@ -30,12 +31,19 @@ public class Wheel {
         width = w;
         height = h;
         isVisible = false;
+        locked = false;
         visibleSlot = new Rectangle();
         visibleSlot.changeSize(height, width);
         visibleSlot.moveHorizontal(x - 70);
         visibleSlot.moveVertical(y - 15);
     }
-
+    
+    /**
+     * Reposiciona la rueda en coordenadas absolutas (x,y).
+     *
+     * @param x nueva posición horizontal, en píxeles
+     * @param y nueva posición vertical, en píxeles
+     */
     public void setPosition(int x, int y) {
         int dx = x - xPosition;
         int dy = y - yPosition;
@@ -126,14 +134,23 @@ public class Wheel {
         return true;
     }
 
-    public void spin(int steps) {
-        if (!symbols.isEmpty()) {
-            currentIndex = (currentIndex + steps) % symbols.size();
+    public boolean spin(int steps) {
+        if (locked) {
+            return false;
+        }
+        if (symbols.isEmpty()) {
+            return true;
+        }
+        int delta = steps < 0 ? -1 : 1;
+        int pasosRestantes = Math.abs(steps);
+        for (int i = 0; i < pasosRestantes; i++) {
+            currentIndex = (currentIndex + delta) % symbols.size();
             if (currentIndex < 0) {
                 currentIndex += symbols.size();
             }
             actualizarVisual();
         }
+        return true;
     }
 
     public String getVisibleSymbol() {
@@ -141,6 +158,27 @@ public class Wheel {
         return symbols.get(currentIndex);
     }
 
+    /**
+    * Bloquea la rueda
+    */
+    public void lock() {
+        locked = true;
+    }
+    
+    /**
+     * Libera la rueda
+     */
+    public void unlock() {
+        locked = false;
+    }
+
+    /**
+     * @return true si la rueda está actualmente bloqueada
+     */
+    public boolean isLocked() {
+        return locked;
+    }
+    
     public String[] getSymbolsArray() {
         return symbols.toArray(new String[0]);
     }
