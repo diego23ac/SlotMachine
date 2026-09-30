@@ -1,0 +1,12 @@
+#BlueJ class context
+comment0.target=SlotMachineCC2Test
+comment0.text=\r\n\ Pruebas\ de\ unidad\r\n
+comment1.params=
+comment1.target=void\ setUp()
+comment2.params=
+comment2.target=void\ accordingToDcSrShouldReachJackpotWhenThreeFreshWheelsMatch()
+comment3.params=
+comment3.target=void\ accordingToDcSrShouldRejectUnsupportedColor()
+comment4.params=
+comment4.target=void\ accordingToDcSrShouldKeepLockedWheelUnchangedAfterSpin()
+numComments=5
