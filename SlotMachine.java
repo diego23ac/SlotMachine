@@ -13,6 +13,9 @@ public class SlotMachine {
     private static final int SIDE_MARGIN = 20;
     private static final int WHEEL_WIDTH = 25;
     private static final int WHEEL_HEIGHT = 120;
+    private static final int MIN_N = 1;
+    private static final int MAX_N = 50;
+    private static final java.util.Random RANDOM = new java.util.Random();
  
     private ArrayList<Wheel> wheels;
     private Rectangle screen;
@@ -50,6 +53,41 @@ public class SlotMachine {
         handlePoint.changeColor("red");
         handlePoint.moveHorizontal(390);
         handlePoint.moveVertical(50);
+    }
+    
+    /**
+     * Crea una máquina de n ruedas y n símbolos, inicializada
+     * aleatoriamente (cada rueda arranca en una posición al azar) y
+     * garantizando que ese estado inicial NUNCA sea ya un jackpot
+     * @param n cantidad de ruedas y de símbolos
+     */
+    public SlotMachine(int n) {
+        this();
+        int cantidad = Math.max(MIN_N, Math.min(n, MAX_N));
+        for (int i = 0; i < cantidad; i++) {
+            addWheel(i + 1);
+        }
+        ArrayList<String> catalogo = new ArrayList<>();
+        String[] coloresBase = Wheel.getColoresPermitidos();
+        for (int i = 0; i < cantidad; i++) {
+            if (i < coloresBase.length) {
+                catalogo.add(coloresBase[i]);
+            } else {
+                catalogo.add("extra" + (i - coloresBase.length + 1));
+            }
+        }
+        for (Wheel w : wheels) {
+            w.setSymbols(catalogo);
+        }
+ 
+        for (Wheel w : wheels) {
+            w.spin(RANDOM.nextInt(cantidad));
+        }
+ 
+        if (cantidad >= 2 && isJackpot()) {
+            wheels.get(0).spin(1);
+        }
+        lastOperationOk = true;
     }
  
     public void addWheel(int pos) {
@@ -307,7 +345,7 @@ public class SlotMachine {
     }
     
     private void actualizarEstadoJackpot() {
-        boolean jackpotActual = isjackpot();
+        boolean jackpotActual = isJackpot();
         if (jackpotActual != lastJackpotState) {
             screen.changeColor(jackpotActual ? "yellow" : "magenta");
             lastJackpotState = jackpotActual;
@@ -337,7 +375,7 @@ public class SlotMachine {
         return config;
     }
 
-    public boolean isjackpot() {
+    public boolean isJackpot() {
         String[] config = configuration();
         if (config.length == 0) return false;
         String primerSimbolo = config[0];
@@ -358,7 +396,7 @@ public class SlotMachine {
         for (Wheel w : wheels) {
             w.makeVisible();
         }
-        lastJackpotState = isjackpot();
+        lastJackpotState = isJackpot();
         if (lastJackpotState) {
             screen.changeColor("yellow");
             traerElementosAlFrente();
@@ -398,7 +436,7 @@ public class SlotMachine {
     }
 
     private void verificarEstadoJackpotVisual() {
-        if (isjackpot()) {
+        if (isJackpot()) {
             screen.changeColor("yellow");
         } else {
             screen.changeColor("magenta");

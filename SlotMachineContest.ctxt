@@ -1,0 +1,17 @@
+#BlueJ class context
+comment0.target=SlotMachineContest
+comment0.text=\r\n\ Resuelve\ y\ simula\ el\ problema\ de\ la\ marat\u00F3n\ (Slot\ Machine)\:\ dado\ un\r\n\ n\u00FAmero\ n\ de\ ruedas\ (y\ n\ s\u00EDmbolos),\ encuentra\ la\ secuencia\ de\ giros\r\n\ que\ deja\ todas\ las\ ruedas\ mostrando\ el\ mismo\ s\u00EDmbolo\ (jackpot).\r\n
+comment1.params=
+comment1.target=SlotMachineContest()
+comment2.params=n
+comment2.target=int[][]\ solve(int)
+comment2.text=\r\n\ Crea\ una\ m\u00E1quina\ de\ n\ ruedas/s\u00EDmbolos\ (queda\ invisible)\ y\r\n\ calcula\ la\ secuencia\ de\ acciones\ {rueda,\ pasos}\ necesarias\ para\r\n\ alinear\ todas\ las\ ruedas\ en\ el\ mismo\ s\u00EDmbolo\r\n\ @param\ n\ cantidad\ de\ ruedas\ y\ de\ s\u00EDmbolos\r\n\ @return\ la\ secuencia\ de\ acciones,\ cada\ una\ como\ {rueda,\ pasos}\r\n
+comment3.params=n
+comment3.target=void\ simulate(int)
+comment3.text=\r\n\ Igual\ que\ solve,\ pero\ deja\ la\ m\u00E1quina\ visible\r\n\ desde\ antes\ de\ resolver,\ para\ que\ el\ proceso\ de\ alineaci\u00F3n\ se\r\n\ vea\ ocurrir\ en\ tiempo\ real\ en\ vez\ de\ calcular\ en\ silencio\ y\r\n\ mostrar\ solo\ el\ resultado\ final.\r\n\r\n\ @param\ n\ cantidad\ de\ ruedas\ y\ de\ s\u00EDmbolos\r\n
+comment4.params=n
+comment4.target=int\ tamanoEfectivo(int)
+comment5.params=maquina\ n
+comment5.target=int[][]\ resolverAlineacion(SlotMachine,\ int)
+comment5.text=\r\n\ Algoritmo\ real\:\ alinea\ las\ ruedas\ 2..n\ contra\ la\ rueda\ 1\ (que\r\n\ nunca\ se\ toca),\ una\ a\ la\ vez,\ usando\ SOLO\ spin(wheel,steps)\ y\r\n\ distinctSymbols()\ -las\ \u00FAnicas\ dos\ herramientas\ de\ observaci\u00F3n\r\n\ permitidas\ para\ "resolver"\ la\ marat\u00F3n-.\r\n
+numComments=6
