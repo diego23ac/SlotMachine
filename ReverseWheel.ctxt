@@ -1,0 +1,12 @@
+#BlueJ class context
+comment0.target=ReverseWheel
+comment0.text=\r\n\ Rueda\ invertida\ (tipo\ nuevo\ propuesto\ por\ nosotros)\:\ gira\ en\ sentido\r\n\ contrario\ al\ pedido.\ spin(wheel,\ 1)\ la\ lleva\ al\ s\u00EDmbolo\ ANTERIOR\ y\r\n\ un\ giro\ negativo\ la\ lleva\ hacia\ adelante.\ Se\ distingue\ por\ su\ marco\r\n\ verde.\r\n\r\n
+comment1.params=x\ y\ w\ h
+comment1.target=ReverseWheel(int,\ int,\ int,\ int)
+comment2.params=
+comment2.target=java.lang.String\ getType()
+comment3.params=
+comment3.target=java.lang.String\ frameColor()
+comment4.params=steps
+comment4.target=void\ turn(int)
+numComments=5

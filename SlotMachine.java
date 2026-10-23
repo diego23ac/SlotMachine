@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.*;
 import javax.swing.JOptionPane;
 
 /**
@@ -65,15 +65,15 @@ public class SlotMachine {
         this();
         int cantidad = Math.max(MIN_N, Math.min(n, MAX_N));
         for (int i = 0; i < cantidad; i++) {
-            addWheel(i + 1);
+            insertarRueda(Wheel.TYPE, i + 1);
         }
-        ArrayList<String> catalogo = new ArrayList<>();
-        String[] coloresBase = Wheel.getColoresPermitidos();
+        ArrayList<Symbol> catalogo = new ArrayList<>();
+        String[] coloresBase = Symbol.getColoresPermitidos();
         for (int i = 0; i < cantidad; i++) {
             if (i < coloresBase.length) {
-                catalogo.add(coloresBase[i]);
+                catalogo.add(new NormalSymbol(coloresBase[i]));
             } else {
-                catalogo.add("extra" + (i - coloresBase.length + 1));
+                catalogo.add(new NormalSymbol("extra" + (i - coloresBase.length + 1)));
             }
         }
         for (Wheel w : wheels) {
@@ -91,22 +91,62 @@ public class SlotMachine {
     }
  
     public void addWheel(int pos) {
+        addWheel(Wheel.TYPE, pos);
+    }
+    
+    /**
+     * Agrega una rueda de un tipo dado ("normal", "lefty", "rebel",
+     * "reverse") en la posición indicada.
+     * Si el tipo no existe, no se agrega nada y ok() queda en false.
+     *
+     * @param type nombre del tipo de rueda
+     * @param pos posición donde insertar
+     */
+    public void addWheel(String type, int pos) {
+        if (!insertarRueda(type, pos)) {
+            lastOperationOk = false;
+            manejarError("Tipo de rueda no válido: \"" + type + "\". Tipos permitidos: "
+                + String.join(", ", Wheel.getTipos()) + ".");
+            return;
+        }
+        lastOperationOk = true;
+    }
+    
+    /**
+     * Crea e inserta la rueda; devuelve false si el tipo no existe.
+     */
+    private boolean insertarRueda(String type, int pos) {
+        Wheel nuevaRueda = Wheel.create(type, 0, 0, WHEEL_WIDTH, WHEEL_HEIGHT);
+        if (nuevaRueda == null) {
+            return false;
+        }
         int maxPos = wheels.size() + 1;
         int targetPos = Math.max(1, Math.min(pos, maxPos));
  
-        boolean huboRuedasPrevias = !wheels.isEmpty();
-        Wheel nuevaRueda = new Wheel(0, 0, WHEEL_WIDTH, WHEEL_HEIGHT);
-        if (huboRuedasPrevias) {
+        if (!wheels.isEmpty()) {
             nuevaRueda.setSymbols(wheels.get(0).getSymbols());
         }
         wheels.add(targetPos - 1, nuevaRueda);
-        actualizarPosicionesRuedas(); 
-        lastOperationOk = true;
+        actualizarVecinos();
+        actualizarPosicionesRuedas();
+ 
         if (isVisible) {
             nuevaRueda.makeVisible();
         }
+        return true;
     }
-
+    
+    /**
+     * Le informa a cada rueda cuál es su vecina de la izquierda (la
+     * necesitan las ruedas zurdas). Se llama cada vez que cambia el
+     * orden de las ruedas.
+     */
+    private void actualizarVecinos() {
+        for (int i = 0; i < wheels.size(); i++) {
+            wheels.get(i).setLeftNeighbor(i > 0 ? wheels.get(i - 1) : null);
+        }
+    }
+    
     /**
      * Distribuye todas las ruedas   y estrictamente
      * dentro del ancho del chasis ("screen"). Se recalcula por completo
@@ -123,6 +163,11 @@ public class SlotMachine {
         }
     }
     
+    /**
+    * Elimina la rueda en la posición indicada y redistribuye las
+    * restantes.
+    * @param pos posición de la rueda a eliminar
+    */
     public void delWheel(int pos) {
         if (wheels.isEmpty()) {
             lastOperationOk = false;
@@ -130,8 +175,15 @@ public class SlotMachine {
             return;
         }
         int index = validarPosicionRueda(pos);
+        if (!wheels.get(index - 1).canBeDeleted()) {
+            lastOperationOk = false;
+            manejarError("La rueda " + index + " es de tipo '" + 
+            wheels.get(index - 1).getType()+ "' y no se deja eliminar.");
+            return;
+        }
         Wheel w = wheels.remove(index - 1);
         w.makeInvisible();
+        actualizarVecinos();
         actualizarPosicionesRuedas();
         lastOperationOk = true;
     }
@@ -153,25 +205,33 @@ public class SlotMachine {
     }
 
     public void addSymbol(int pos, String color) {
+        addSymbol(NormalSymbol.TYPE, pos, color);
+    }
+
+    public void addSymbol(String type, int pos, String color) {
         if (wheels.isEmpty()) {
             lastOperationOk = false;
             manejarError("No hay ruedas creadas para agregar símbolos.");
             return;
         }
-        
-        boolean agregadoEnTodas = true;
+        if (!Symbol.esTipoValido(type)) {
+            lastOperationOk = false;
+            manejarError("Tipo de símbolo no válido: \"" + type + 
+            "\". Tipos permitidos: "+ String.join(", ", Symbol.getTipos()) + ".");
+            return;
+        }
+        if (!Symbol.esColorValido(color)) {
+            lastOperationOk = false;
+            manejarError("Color no válido: \"" + color + 
+            "\". Colores permitidos: "+ String.join(", ", Symbol.getColoresPermitidos()) + ".");
+            return;
+        }
         for (Wheel w : wheels) {
-            if (!w.addSymbol(pos, color)) {
-                agregadoEnTodas = false;
-            }
+            w.addSymbol(pos, Symbol.create(type, color));
         }
-        lastOperationOk = agregadoEnTodas;
-        if (!agregadoEnTodas) {
-            manejarError("Color no válido: \"" + color + "\". Colores permitidos: "
-                + String.join(", ", Wheel.getColoresPermitidos()) + ".");
-        }
+        lastOperationOk = true;
     }
-
+    
     public void delSymbol(String symbol) {
         boolean eliminado = false;
         for (Wheel w : wheels) {
@@ -218,11 +278,17 @@ public class SlotMachine {
         }
         int i1 = validarPosicionRueda(wheel1) - 1;
         int i2 = validarPosicionRueda(wheel2) - 1;
+        
+        if (!wheels.get(i1).canBeSwapped() || !wheels.get(i2).canBeSwapped()) {
+            lastOperationOk = false;
+            manejarError("Alguna de las ruedas indicadas no se deja intercambiar.");
+            return;
+        }
  
         Wheel temporal = wheels.get(i1);
         wheels.set(i1, wheels.get(i2));
         wheels.set(i2, temporal);
- 
+        actualizarVecinos();
         if (i1 != i2) {
             int[] posicionesX = calcularPosicionesX();
             int yFijo = filaYRuedas();
@@ -236,15 +302,21 @@ public class SlotMachine {
      * Fija una rueda
      * @param wheel posición de la rueda a fijar
      */
-    public void lock(int wheel) {
+    public int lock(int wheel) {
         if (wheels.isEmpty()) {
             lastOperationOk = false;
             manejarError("No hay ruedas para fijar.");
-            return;
+            return 0;
         }
         int index = validarPosicionRueda(wheel);
-        wheels.get(index - 1).lock();
+        if (!wheels.get(index - 1).lock()) {
+            lastOperationOk = false;
+            manejarError("La rueda " + index + " es de tipo '" + wheels.get(index - 1).getType()
+                + "' y no se deja bloquear.");
+            return 0;
+        }
         lastOperationOk = true;
+        return index;
     }
  
     /**
@@ -360,7 +432,7 @@ public class SlotMachine {
 
     public int distinctSymbols() {
         String[] config = configuration();
-        java.util.HashMap<String, Boolean> distinct = new java.util.HashMap<>();
+        HashMap<String, Boolean> distinct = new HashMap<>();
         for (String s : config) {
             distinct.put(s,true);
         }
@@ -432,14 +504,6 @@ public class SlotMachine {
     private void manejarError(String mensaje) {
         if (isVisible) {
             JOptionPane.showMessageDialog(null, mensaje, "Error en Simulador", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private void verificarEstadoJackpotVisual() {
-        if (isJackpot()) {
-            screen.changeColor("yellow");
-        } else {
-            screen.changeColor("magenta");
         }
     }
     

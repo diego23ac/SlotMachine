@@ -1,0 +1,21 @@
+#BlueJ class context
+comment0.target=ShySymbol
+comment0.text=\r\n\ S\u00EDmbolo\ t\u00EDmido\:\ se\ dibuja\ como\ un\ tri\u00E1ngulo\ que\ alterna\ entre\r\n\ visible\ e\ invisible\ cada\ vez\ que\ la\ rueda\ lo\ selecciona.\ Empieza\r\n\ visible.\r\n\r\n
+comment1.params=color
+comment1.target=ShySymbol(java.lang.String)
+comment1.text=\r\n\ @param\ color\ color\ del\ s\u00EDmbolo\r\n
+comment2.params=
+comment2.target=java.lang.String\ getType()
+comment3.params=
+comment3.target=Symbol\ copy()
+comment4.params=
+comment4.target=void\ onSelected()
+comment4.text=\r\n\ Alterna\ entre\ visible\ e\ invisible.\r\n
+comment5.params=
+comment5.target=boolean\ isRevealed()
+comment5.text=\r\n\ @return\ true\ si\ el\ s\u00EDmbolo\ est\u00E1\ actualmente\ visible\r\n
+comment6.params=x\ y\ w\ h
+comment6.target=void\ show(int,\ int,\ int,\ int)
+comment7.params=
+comment7.target=void\ hide()
+numComments=8

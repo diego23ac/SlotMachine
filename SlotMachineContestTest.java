@@ -1,16 +1,24 @@
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Pruebas de unidad de Ciclo 3
+ * Pruebas de unidad de Ciclo 3: el constructor SlotMachine(n) y
+ * SlotMachineContest (solve/simulate).
+ * <p>
+ * Como SlotMachine(n) se inicializa al azar, estas pruebas verifican
+ * propiedades estructurales e invariantes (tamaños, rangos válidos,
+ * que nunca arranque ya en jackpot, que solve() se mantenga
+ * invisible) en vez de valores exactos de color.
  */
 public class SlotMachineContestTest {
 
-    @BeforeEach
-    public void setUp()
-    {
+    /**
+     * Tears down the test fixture.
+     * Called after every test case method.
+     */
+    @AfterEach
+    public void tearDown() {
     }
 
     @Test
@@ -90,12 +98,36 @@ public class SlotMachineContestTest {
     }
 
     @Test
+    public void shouldReachJackpotAfterResolvingRandomMachines() {
+        for (int n = 2; n <= 10; n++) {
+            for (int intento = 0; intento < 20; intento++) {
+                SlotMachine maquina = new SlotMachine(n);
+                SlotMachineContest.resolverAlineacion(maquina, n);
+                assertTrue(maquina.isJackpot());
+            }
+        }
+    }
+
+    @Test
+    public void shouldReproduceJackpotReplayingActionsOnIdenticalMachine() {
+        for (int n = 2; n <= 10; n++) {
+            SlotMachine original = new SlotMachine(n);
+            SlotMachine copia = new SlotMachine(n);
+            copia.spin(original.configuration());
+            int[][] acciones = SlotMachineContest.resolverAlineacion(original, n);
+            for (int[] accion : acciones) {
+                copia.spin(accion[0], accion[1]);
+            }
+            assertTrue(copia.isJackpot());
+        }
+    }
+
+    // ==========================================
+    // SlotMachineContest.simulate(n)
+    // ==========================================
+
+    @Test
     public void shouldRunSimulateWithoutCrashingForSmallN() {
         SlotMachineContest.simulate(3);
-    }
-    
-    @AfterEach
-    public void tearDown()
-    {
     }
 }

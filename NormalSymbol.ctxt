@@ -1,0 +1,15 @@
+#BlueJ class context
+comment0.target=NormalSymbol
+comment0.text=\r\n\ S\u00EDmbolo\ normal\:\ un\ rect\u00E1ngulo\ de\ color\ que\ llena\ la\ ventana\ de\ la\r\n\ rueda\r\n
+comment1.params=color
+comment1.target=NormalSymbol(java.lang.String)
+comment1.text=\r\n\ @param\ color\ color\ del\ s\u00EDmbolo\r\n
+comment2.params=
+comment2.target=java.lang.String\ getType()
+comment3.params=
+comment3.target=Symbol\ copy()
+comment4.params=x\ y\ w\ h
+comment4.target=void\ show(int,\ int,\ int,\ int)
+comment5.params=
+comment5.target=void\ hide()
+numComments=6

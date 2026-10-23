@@ -1,0 +1,16 @@
+#BlueJ class context
+comment0.target=RebelWheel
+comment0.text=\r\n\ Rueda\ rebelde\:\ no\ se\ deja\ bloquear,\ ni\ intercambiar,\ ni\ eliminar.\r\n\ Se\ distingue\ por\ su\ marco\ negro.\r\n
+comment1.params=x\ y\ w\ h
+comment1.target=RebelWheel(int,\ int,\ int,\ int)
+comment2.params=
+comment2.target=java.lang.String\ getType()
+comment3.params=
+comment3.target=java.lang.String\ frameColor()
+comment4.params=
+comment4.target=boolean\ canBeLocked()
+comment5.params=
+comment5.target=boolean\ canBeSwapped()
+comment6.params=
+comment6.target=boolean\ canBeDeleted()
+numComments=7

@@ -1,0 +1,24 @@
+#BlueJ class context
+comment0.target=EphemeralSymbol
+comment0.text=\r\n\ S\u00EDmbolo\ ef\u00EDmero\:\ se\ dibuja\ como\ un\ c\u00EDrculo\ que,\ en\ cada\ giro\ de\ la\r\n\ rueda,\ decrementa\ su\ tama\u00F1o\ hasta\ quedar\ como\ un\ punto\ (no\ vuelve\ a\r\n\ crecer).\r\n
+comment1.params=color
+comment1.target=EphemeralSymbol(java.lang.String)
+comment1.text=\r\n\ @param\ color\ color\ del\ s\u00EDmbolo\r\n
+comment2.params=
+comment2.target=java.lang.String\ getType()
+comment3.params=
+comment3.target=Symbol\ copy()
+comment4.params=
+comment4.target=void\ onSpin()
+comment4.text=\r\n\ Reduce\ un\ nivel\ el\ tama\u00F1o\ del\ s\u00EDmbolo,\ hasta\ llegar\ a\ un\ punto.\r\n
+comment5.params=
+comment5.target=int\ getLevel()
+comment5.text=\r\n\ @return\ cu\u00E1ntos\ giros\ ha\ "consumido"\ el\ s\u00EDmbolo\ (0\ \=\ tama\u00F1o\r\n\ \ \ \ \ \ \ \ \ completo)\r\n
+comment6.params=
+comment6.target=boolean\ isPoint()
+comment6.text=\r\n\ @return\ true\ si\ el\ s\u00EDmbolo\ ya\ qued\u00F3\ reducido\ a\ un\ punto\r\n
+comment7.params=x\ y\ w\ h
+comment7.target=void\ show(int,\ int,\ int,\ int)
+comment8.params=
+comment8.target=void\ hide()
+numComments=9

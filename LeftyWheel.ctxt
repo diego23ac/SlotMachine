@@ -1,0 +1,13 @@
+#BlueJ class context
+comment0.target=LeftyWheel
+comment0.text=\r\n\ Rueda\ zurda\:\ si\ hay\ una\ rueda\ a\ su\ izquierda,\ al\ girar\ copia\ su\r\n\ estado\ (queda\ mostrando\ el\ mismo\ s\u00EDmbolo\ que\ ella)\ en\ vez\ de\r\n\ moverse\ por\ su\ cuenta.\ Si\ es\ la\ primera,\ gira\ como\ una\ rueda\r\n\ normal.\ Se\ distingue\ por\ su\ marco\ blanco.\r\n\r\n
+comment1.params=x\ y\ w\ h
+comment1.target=LeftyWheel(int,\ int,\ int,\ int)
+comment1.text=@see\ Wheel\#Wheel(int,\ int,\ int,\ int)
+comment2.params=
+comment2.target=java.lang.String\ getType()
+comment3.params=
+comment3.target=java.lang.String\ frameColor()
+comment4.params=steps
+comment4.target=void\ turn(int)
+numComments=5

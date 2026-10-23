@@ -13,5 +13,5 @@ comment4.params=n
 comment4.target=int\ tamanoEfectivo(int)
 comment5.params=maquina\ n
 comment5.target=int[][]\ resolverAlineacion(SlotMachine,\ int)
-comment5.text=\r\n\ Algoritmo\ real\:\ alinea\ las\ ruedas\ 2..n\ contra\ la\ rueda\ 1\ (que\r\n\ nunca\ se\ toca),\ una\ a\ la\ vez,\ usando\ SOLO\ spin(wheel,steps)\ y\r\n\ distinctSymbols()\ -las\ \u00FAnicas\ dos\ herramientas\ de\ observaci\u00F3n\r\n\ permitidas\ para\ "resolver"\ la\ marat\u00F3n-.\r\n
+comment5.text=\r\n\ Algoritmo\ real\:\ alinea\ las\ ruedas\ 2..n\ contra\ la\ rueda\ 1\ (que\r\n\ nunca\ se\ toca),\ una\ a\ la\ vez,\ usando\ SOLO\ spin(wheel,steps)\ y\r\n\ distinctSymbols()\r\n
 numComments=6

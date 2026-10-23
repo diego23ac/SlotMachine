@@ -41,10 +41,9 @@ public class SlotMachineContest {
     /**
      * Algoritmo real: alinea las ruedas 2..n contra la rueda 1 (que
      * nunca se toca), una a la vez, usando SOLO spin(wheel,steps) y
-     * distinctSymbols() -las únicas dos herramientas de observación
-     * permitidas para "resolver" la maratón-.
+     * distinctSymbols()
      */
-    private static int[][] resolverAlineacion(SlotMachine maquina, int n) {
+    public static int[][] resolverAlineacion(SlotMachine maquina, int n) {
         if (n <= 1) {
             return new int[0][2];
         }
